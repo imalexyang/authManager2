@@ -26,10 +26,10 @@
 		<!-- 当连接失效时，获得连接的次数，0为无限次（重连） -->
 		<property name="acquireRetryAttempts" value="${c3p0.acquireRetryAttempts}" />
 	</bean>
-<!-- log4jdbc -->
-<bean id="myBatisDataSource" class="net.sf.log4jdbc.Log4jdbcProxyDataSource">
-    <constructor-arg ref="dataSourceSpied" />
-  </bean>
+	<!-- log4jdbc -->
+	<bean id="myBatisDataSource" class="net.sf.log4jdbc.Log4jdbcProxyDataSource">
+	    <constructor-arg ref="dataSourceSpied" />
+	  </bean>
 
 
 	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">

@@ -83,7 +83,7 @@
 
     <import resource="classpath:spring/spring-config-shiro.xml"/>
     <!-- <import resource="classpath:spring/spring-redis.xml"/> -->
-    <import resource="classpath:spring/spring-dubbo.xml"/>
+    <!-- <import resource="classpath:spring/spring-dubbo.xml"/> -->
     <import resource="classpath:spring/spring-aspectj.xml"/>
     <import resource="classpath:spring/spring-mybatis.xml"/>
 </beans>
