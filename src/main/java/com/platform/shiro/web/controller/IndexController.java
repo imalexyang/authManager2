@@ -1,0 +1,87 @@
+package com.platform.shiro.web.controller;
+
+import com.platform.shiro.Constants;
+import com.platform.shiro.entity.Organization;
+import com.platform.shiro.entity.Resource;
+import com.platform.shiro.service.AuthorizationService;
+import com.platform.shiro.service.OrganizationService;
+import com.platform.shiro.service.ResourceService;
+import com.platform.shiro.service.UserService;
+import com.platform.shiro.web.bind.annotation.CurrentUser;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Controller;
+import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+
+/**
+ * 
+* @ClassName: IndexController 
+* @Description: 主页
+* @author yangyw(imalex@163.com)
+* @date 2015年3月20日 下午2:08:34 
+*
+ */
+@Controller
+public class IndexController {
+
+    @Autowired
+    private ResourceService resourceService;
+    @Autowired
+    private AuthorizationService authorizationService;
+    @Autowired
+    private UserService userService;
+    @Autowired
+    private OrganizationService organizationService;
+
+    @RequestMapping("/")
+    public String index(@CurrentUser com.platform.shiro.entity.User loginUser, Model model) {
+        Set<String> permissions = authorizationService.findPermissions(Constants.SERVER_APP_KEY, loginUser.getUsername());
+        List<Resource> menus = resourceService.findMenus(permissions);
+        model.addAttribute("menus", menus);        
+   
+        Organization org=organizationService.findOne(loginUser.getOrganizationId());
+        //判断商户号非空，直接返回主界�?        
+        while(org.getStoreId()!=null&&!org.getStoreId().equals("")){        	
+        	return "index";        	
+        };
+        //商户号为空，ID=1为集团账号初始化
+        while(org.getId()==1){
+        	model.addAttribute("url", "http://localhost/storeManager/store/configOne");
+        	return "common/forward";  
+        }     
+        //商户号为空，门店初始�?
+        model.addAttribute("url", "http://localhost/storeManager/store/configStoreOne");
+    	return "common/forward";
+    }
+
+    @RequestMapping("/menus")
+    public String menus(@CurrentUser com.platform.shiro.entity.User loginUser, Model model,@RequestParam(value="pid",required=true) Long pid) {
+            
+        List<Resource> resourceList=new ArrayList<Resource>();
+    	for(Resource resource:resourceService.findAll()){
+    		if(resource.getParentId()==pid){
+    			resourceList.add(resource);
+    		}
+    	}        
+        model.addAttribute("menus", resourceList);
+        return "common/menus";
+    }
+    
+    @RequestMapping("/iframeAutoHeight")
+    public String iframeAutoHeight(Model model) {
+        return "common/autoFrameHeight";
+    }
+    
+    @RequestMapping("/welcome")
+    public String welcome() {
+        return "welcome";
+    }
+
+
+}
